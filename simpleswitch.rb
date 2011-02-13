@@ -75,7 +75,7 @@ class Switch
   def request(options={})
     if options["+end"] && !options["has"]
       @message.body = {".tap"=>[{"is" => { "+end" => options["+end"]}}]}
-    elsif option["+end"] && options["has"]
+    elsif options["+end"] && options["has"]
       @message.body = {".tap"=>[{"is" => { "+end" => options["+end"]}, "has" => options["has"]}]}
     elsif options["has"]
       @message.body = {".tap"=>[{"has" => options["has"]}]}
