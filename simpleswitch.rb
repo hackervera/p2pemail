@@ -11,16 +11,13 @@ class String
 end
 
 class UDPMessage
-  attr_accessor :hostname, :port, :body, :line, :me, :br, :to, :line, :br
-  def initialize(socket, switch)
+  attr_accessor :hostname, :port, :body, :line, :me, :br, :to
+  def initialize(socket)
     @socket = socket
     @br = 0
-    @switch = switch
   end
   def send_message
-    p "sending: #{self.body}"
-    
-    body = { "_to" => @switch.to, "_line" => @switch.line, "_br" => @switch.br }
+    body = { "_to" => self.to, "_line" => self.line, "_br" => self.br }
     self.body = self.body.merge(body.select{|k,v| !v.nil?})
     p self.body.to_json
     @socket.send self.body.to_json, 0, self.hostname, self.port
@@ -38,8 +35,7 @@ class Switch
     @to = "#{@server}:#{@port}"
     @modulus = "somerandomhexnumber"
     @response_callback = options["response_callback"] || lambda {|x|}
-    @request = options["request"] || lambda {|x|}
-    @extra_code = options["extra_code"] || lambda {|x|}
+    @after_connect = options["after_connect"] || lambda {|x|}
   end
   
   def ping_loop
@@ -65,8 +61,7 @@ class Switch
         line = response_json["_ring"]
         @message.me = response_json["_to"]
         @message.line = line
-        @request.call(self)
-        @extra_code.call(self)
+        @after_connect.call(self)
         Thread.new do
           ping_loop
         end if counter == 1
@@ -79,11 +74,11 @@ class Switch
   
   def request(options={})
     if options["+end"] && !options["has"]
-      p @message.body = {".tap"=>[{"is" => { "+end" => options["+end"]}}]}
+      @message.body = {".tap"=>[{"is" => { "+end" => options["+end"]}}]}
     elsif option["+end"] && options["has"]
-      p @message.body = {".tap"=>[{"is" => { "+end" => options["+end"]}, "has" => options["has"]}]}
+      @message.body = {".tap"=>[{"is" => { "+end" => options["+end"]}, "has" => options["has"]}]}
     elsif options["has"]
-      p @message.body = {".tap"=>[{"has" => options["has"]}]}
+      @message.body = {".tap"=>[{"has" => options["has"]}]}
     end
     p "Sending tap"
     @message.send_message
@@ -95,7 +90,7 @@ class Switch
     @socket = UDPSocket.new
     p "binding server"
     p @socket.bind("0.0.0.0",0)
-    @message = UDPMessage.new(@socket, self)
+    @message = UDPMessage.new(@socket)
     @message.hostname = @server
     @message.port = @port
     @message.body = {"+end"=>"38666817e1b38470644e004b9356c1622368fa57"}

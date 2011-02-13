@@ -1,12 +1,17 @@
 require './simpleswitch'
+require './email_db'
 
-
+mail = Database.new
+modulus = nil
 response_callback = lambda do |msg|
   p "Got your message: #{msg["+body"]}"
+  if msg.has_key? "+getmail"
+    p mail.get_mail_for_user(modulus)
+  end
 end
 
-request = lambda do |this|
-  p this.modulus.sha1
+after_connect = lambda do |this|
+  modulus = this.modulus.sha1
   this.request("+end" => this.modulus.sha1)
 end
   
@@ -14,6 +19,6 @@ end
 switch = Switch.new(
           "response_callback"=>response_callback, 
           "host" => "nostat.us",
-          "request" => request
+          "after_connect" => after_connect
           )
 switch.start_udpserver
