@@ -12,4 +12,7 @@ class Database
   def create_table
     @db.execute("CREATE TABLE IF NOT EXISTS mail (modulus,message,timestamp)")
   end
+  def save_message(modulus,msg,time)
+    @db.execute("INSERT INTO mail VALUES('#{modulus}','#{msg}','#{time}')")
+  end
 end

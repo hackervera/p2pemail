@@ -1,11 +1,18 @@
+if not RUBY_VERSION =~ /1.9/
+  abort "You need ruby version 1.9 or above"
+end
 require './simpleswitch'
 require './email_db'
-
+#TODO create config file for server values
 mail = Database.new
 modulus = nil
 message = nil
 response_callback = lambda do |msg|
   p "Got your message: #{msg["+body"]}"
+  if msg.has_key? "+body"
+    mail.save_message(modulus,msg["+body"],"Now")
+    return
+  end
   if msg.has_key? "+getmail"
     p mail.get_mail_for_user(modulus)
     message.body = { "+#{msg["+callback"]}" => true, "+body" => mail.get_mail_for_user(modulus) }

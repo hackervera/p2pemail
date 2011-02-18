@@ -2,7 +2,7 @@ require 'socket'
 require 'digest/sha1'
 require 'json'
 
-Thread.abort_on_exception = true
+#Thread.abort_on_exception = true
 
 class String
   def sha1
