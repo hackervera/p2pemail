@@ -29,6 +29,7 @@ class Database
     @db.execute("CREATE TABLE IF NOT EXISTS mail (modulus,message,timestamp)")
     @db.execute("CREATE TABLE IF NOT EXISTS keys (modulus,encryption)")
     @db.execute("CREATE TABLE IF NOT EXISTS hosts (modulus)")
+    @db.execute("CREATE TABLE IF NOT EXISTS servers (server)")
   end
   def save_message(modulus,msg,time)
     @db.execute("INSERT INTO mail VALUES('#{modulus}','#{msg}','#{time}')")
