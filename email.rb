@@ -26,7 +26,7 @@ end
 after_connect = lambda do |this|
   this.request("+end" => modulus.to_s.sha1)
   this.request("has" => "+body")
-  this.request("has" => "+newhost")
+  this.request("has" => "+newhost", "+end" => modulus.to_s.sha1)
   mail.hosts.each do |host|
     this.request("+end" => host.first)
   end
