@@ -1,28 +1,35 @@
 if not RUBY_VERSION =~ /1.9/
-  abort "You need ruby version 1.9 or above"
+  abort "You need ruby version 1.9"
 end
 require './simpleswitch'
 require './email_db'
+Thread.abort_on_exception = true
 #TODO create config file for server values
 mail = Database.new
-modulus = nil
 message = nil
+socket = nil
+modulus = mail.modulus
 response_callback = lambda do |msg|
   p "Got your message: #{msg["+body"]}"
   if msg.has_key? "+body"
-    mail.save_message(modulus,msg["+body"],"Now")
+    mail.save_message(modulus.sha1,msg["+body"],"Now")
     return
-  end
-  if msg.has_key? "+getmail"
-    p mail.get_mail_for_user(modulus)
-    message.body = { "+#{msg["+callback"]}" => true, "+body" => mail.get_mail_for_user(modulus) }
+  elsif msg.has_key? "+getmail"
+    p "modulus: #{modulus}"
+    message.body = { "+callback" => mail.mail(msg["+end"]), "+end" => msg["+end"] }
     message.send_message
+  elsif msg.has_key? "+newhost"
+    mail.add_host(msg["+newhost"])
   end
 end
 
 after_connect = lambda do |this|
-  modulus = this.modulus.sha1
-  this.request("+end" => this.modulus.sha1)
+  this.request("+end" => modulus.sha1)
+  this.request("has" => "+newhost")
+  mail.hosts.each do |host|
+    this.request("+end" => host.first)
+  end
+  socket = this
   message = this.message
 end
   
@@ -32,4 +39,7 @@ switch = Switch.new(
           "host" => "nostat.us",
           "after_connect" => after_connect
           )
-switch.start_udpserver
+Thread.new do
+  switch.start_udpserver
+end
+sleep 5000000

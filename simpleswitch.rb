@@ -1,9 +1,11 @@
 require 'socket'
 require 'digest/sha1'
 require 'json'
+require 'yaml'
+require './email_db'
 
 #Thread.abort_on_exception = true
-
+#TODO config file
 class String
   def sha1
     Digest::SHA1.hexdigest(self)
@@ -33,7 +35,6 @@ class Switch
     @server =  Socket.getaddrinfo(host,'http').first[2]
     @port = port
     @to = "#{@server}:#{@port}"
-    @modulus = "somerandomhexnumber"
     @response_callback = options["response_callback"] || lambda {|x|}
     @after_connect = options["after_connect"] || lambda {|x|}
   end
@@ -58,10 +59,13 @@ class Switch
       line = nil
       @response = response_json
       if response_json.has_key?("_ring")
+        p "adding ring"
         line = response_json["_ring"]
         @message.me = response_json["_to"]
         @message.line = line
+        p "line added to message"
         @after_connect.call(self)
+        p "sucessfully called after_connect"
         Thread.new do
           ping_loop
         end if counter == 1
@@ -69,6 +73,7 @@ class Switch
       elsif not response_json.has_key?(".tap")
         @response_callback.call(response_json)
       end
+      p "end of loop"
     end
   end
   
@@ -98,9 +103,6 @@ class Switch
     @message.send_message
     Thread.new do
       receive_loop
-    end
-    Thread.list.each do |thr|
-      thr.join
     end
     rescue => e
       p e
