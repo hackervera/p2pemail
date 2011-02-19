@@ -1,10 +1,11 @@
 require './simpleswitch'
 require './email_db'
 
-Shoes.app :width => 1000, :title => "P2P Mail" do
   mail = Database.new
   message = nil
   modulus = mail.modulus
+
+Shoes.app :width => 1000, :title => "P2P Mail" do
   p "MODULUS: #{modulus}"
   @outgoing = flow :width => 400
   flow :width => 100
@@ -65,7 +66,7 @@ Shoes.app :width => 1000, :title => "P2P Mail" do
   stack
   para "\n\nYour address is:\n"
   @mycode = edit_line :width => "350", :align => "center"
-  @mycode.text = "#{modulus.sha1}"
+  @mycode.text = "#{modulus.to_s.sha1}"
   @friends = para 
   @friends.text = "(give this to your friends)"
 
