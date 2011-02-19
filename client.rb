@@ -48,6 +48,7 @@ Shoes.app :width => 1000, :title => "P2P Mail" do
     if server = mail.servers
       this.message.body= {"+end" => server, "+newhost" => modulus }
       this.message.send_message
+    end
   end
 
 
@@ -63,7 +64,7 @@ Shoes.app :width => 1000, :title => "P2P Mail" do
   
     switch = Switch.new("host" => "nostat.us", "after_connect" => after_connect, "response_callback" => response_callback)
 
-    Thread.new do
+  Thread.new do
     switch.start_udpserver
   end
   stack
