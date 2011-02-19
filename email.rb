@@ -12,7 +12,7 @@ modulus = mail.modulus
 response_callback = lambda do |msg|
   p "Got your message: #{msg["+body"]}"
   if msg.has_key? "+body"
-    mail.save_message(modulus.sha1,msg["+body"],"Now")
+    mail.save_message(msg["+from"],msg["+body"],Time.now)
     return
   elsif msg.has_key? "+getmail"
     p "modulus: #{modulus}"
@@ -24,7 +24,8 @@ response_callback = lambda do |msg|
 end
 
 after_connect = lambda do |this|
-  this.request("+end" => modulus.sha1)
+  this.request("+end" => modulus.to_s.sha1)
+  this.request("has" => "+body")
   this.request("has" => "+newhost")
   mail.hosts.each do |host|
     this.request("+end" => host.first)

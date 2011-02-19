@@ -1,14 +1,14 @@
 require './simpleswitch'
 require './email_db'
 
-Shoes.app :width => 800, :title => "P2P Mail" do
+Shoes.app :width => 1000, :title => "P2P Mail" do
   mail = Database.new
   message = nil
   modulus = mail.modulus
   p "MODULUS: #{modulus}"
   @outgoing = flow :width => 400
   flow :width => 100
-  @incoming = flow :width => 300
+  @incoming = flow :width => 500
   
   @outgoing_stack = @outgoing.stack :width => 400
   @incoming_stack = @incoming.stack :height => 300, :scroll => true
@@ -26,7 +26,7 @@ Shoes.app :width => 800, :title => "P2P Mail" do
   @getmail_button = @mailbutton_stack.button "Get mail"
   @send_button.click do
    p message
-    message.body = { "+end" => @to_address.text, "+body" => @message_entry.text }
+    message.body = { "+end" => @to_address.text, "+body" => @message_entry.text, "+from" => modulus.sha1 }
     message.send_message
     @message_entry.text = ""
     @message_entry.focus
@@ -51,7 +51,7 @@ Shoes.app :width => 800, :title => "P2P Mail" do
     p "Just received: #{msg}"
     if msg.has_key? "+callback"
       text = msg["+callback"].map do |mail_item|
-        "Message: #{mail_item["body"]}\n Timestamp: #{mail_item["timestamp"]}"
+        "FROM: #{mail_item["modulus"]}\n Message: #{mail_item["body"]}\n Timestamp: #{mail_item["timestamp"]}"
       end.reverse
         @messages.text = text.join "\n\n"
     end
@@ -62,7 +62,7 @@ Shoes.app :width => 800, :title => "P2P Mail" do
     Thread.new do
     switch.start_udpserver
   end
-  
+  stack
   para "\n\nYour address is:\n"
   @mycode = edit_line :width => "350", :align => "center"
   @mycode.text = "#{modulus.sha1}"

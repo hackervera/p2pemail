@@ -7,7 +7,7 @@ class Database
     create_table
   end
   def modulus
-    rows = @db.execute("SELECT modulus FROM keys").first.first
+    rows = @db.execute("SELECT modulus FROM keys")
     p rows
     if rows.nil? || rows.empty?
       p "creating modulus"
@@ -15,7 +15,7 @@ class Database
       @db.execute("INSERT INTO keys VALUES('#{key.n}','#{key.e}')")
       return key.n
     end
-    return rows
+    return rows.first.first
   end
   def mail(modulus)
     p modulus
