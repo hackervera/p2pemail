@@ -39,12 +39,15 @@ Shoes.app :width => 1000, :title => "P2P Mail" do
   end
   
 
-    after_connect = lambda do |this|
+  after_connect = lambda do |this|
     this.request("+end" => modulus.sha1)
     message = this.message
     p "modulus: #{modulus}"
     this.message.body = {"+end" => modulus.sha1, "+getmail" => true }
     this.message.send_message
+    if server = mail.servers
+      this.message.body= {"+end" => server, "+newhost" => modulus }
+      this.message.send_message
   end
 
 

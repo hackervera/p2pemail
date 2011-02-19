@@ -1,5 +1,6 @@
 require 'sqlite3'
 require 'openssl'
+require 'yaml'
 
 class Database
   def initialize
@@ -40,5 +41,14 @@ class Database
   end
   def hosts
     @db.execute("SELECT modulus FROM hosts")
+  end
+  def servers
+    server = @db.execute("SELECT server from servers")
+    if server.empty?
+      config = YAML::load_file("./server.config")
+      @db.execute("INSERT into servers VALUES('#{config["server"]}')")
+      return config["server"]
+    end
+    return false
   end
 end
