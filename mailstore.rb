@@ -1,5 +1,6 @@
 require 'pstore'
 require 'ostruct'
+require 'openssl'
 
 class Mail < OpenStruct
 end
@@ -44,7 +45,7 @@ class Database
       mod = @store['n']
       if mod.nil?
         p "creating modulus"
-        key = generate_key
+        key = OpenSSL::PKey::RSA.new(128)
         @store['n'] = key.n.to_i
         @store['e'] = key.e.to_i
         mod = @store['n']
