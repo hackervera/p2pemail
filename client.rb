@@ -1,10 +1,11 @@
 require './simpleswitch'
 require './email_db'
-
+require 'yaml'
+config = YAML::load_file('server.config')
   mail = Database.new
   message = nil
   modulus = mail.modulus
-  server = mail.servers
+  server = config['server']
 
 Shoes.app :width => 1000, :title => "P2P Mail" do
   p "MODULUS: #{modulus}"
@@ -47,7 +48,7 @@ Shoes.app :width => 1000, :title => "P2P Mail" do
     this.message.body = {"+end" => modulus.sha1, "+getmail" => true }
     this.message.send_message
     if server
-      this.message.body= {"+end" => server.to_s.sha1, "+newhost" => modulus.to_s.sha1 }
+      this.message.body= {"+end" => server, "+newhost" => modulus.to_s.sha1 }
       this.message.send_message
     end
   end
