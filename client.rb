@@ -57,7 +57,7 @@ Shoes.app :width => 1000, :title => "P2P Mail" do
 
   response_callback = lambda do |msg|
     p "Just received: #{msg}"
-    if msg.has_key? "+callback"
+    if msg.has_key?("+callback") && msg["+end"] == modulus.sha1
       text = msg["+callback"].map do |mail_item|
         "FROM: #{mail_item["from"]}\n Message: #{mail_item["message"]}\n Timestamp: #{mail_item["time"]}"
       end.reverse
