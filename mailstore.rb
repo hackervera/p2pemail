@@ -10,18 +10,18 @@ class Database
   def mail(user)
     mail = nil
     @store.transaction do
-      mail = @store['mail:#{user}']
+      mail = @store["mail:#{user}"]
     end
     return mail
   end
   def store(options)
     @store.transaction do
-      @store['mail:#{options[:user]}'] ||= []
+      @store["mail:#{options[:user]}"] ||= []
       mail = Mail.new
       mail.from = options[:from]
       mail.message = options[:message]
       mail.time = options[:time]
-      @store['mail:#{options[:user]}'] << mail
+      @store["mail:#{options[:user]}"] << mail
     end
   end
   def add_host(host)
