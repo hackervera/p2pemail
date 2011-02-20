@@ -8,9 +8,7 @@ class Database
     @store = PStore.new("mail_storage")
   end
   def mail(user)
-    @store.transaction do
-      return @store['mail:#{user}']
-    end
+    return @store['mail:#{user}']
   end
   def store(options)
     @store.transaction do
@@ -34,14 +32,15 @@ class Database
     end
   end
   def modulus
+    mod = nil
     @store.transaction do
-      mod = @store['modulus']
+      mod = @store['n']
       if mod.nil?
         p "creating modulus"
         key = generate_key
-        @store['n'] = key.n
-        @store['e'] = key.e
-        return key.n
+        @store['n'] = key.n.to_i
+        @store['e'] = key.e.to_i
+        mod = @store['n']
       end
     end
     return mod
