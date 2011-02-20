@@ -35,7 +35,7 @@ Shoes.app :width => 1000, :title => "P2P Mail" do
   end
   @getmail_button.click do
     @messages.text = "Retrieving messages..."
-    message.body = { "+getmail" => true, "+end" => server.to_s.sha1, "+from" => modulus.to_s.sha1}
+    message.body = { "+getmail" => true, "+end" => modulus.to_s.sha1, "+from" => modulus.to_s.sha1, "_hop" => 1}
     message.send_message
   end
   
