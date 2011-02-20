@@ -44,12 +44,13 @@ class Database
     @db.execute("SELECT modulus FROM hosts")
   end
   def servers
+    config = YAML::load_file("./server.config")
     server = @db.execute("SELECT server from servers")
     if server.empty?
-      config = YAML::load_file("./server.config")
+      
       @db.execute("INSERT into servers VALUES('#{config["server"]}')")
       return config["server"]
     end
-    return false
+    return config["server"]
   end
 end

@@ -24,6 +24,7 @@ response_callback = lambda do |msg|
 end
 
 after_connect = lambda do |this|
+  p "My modulus: #{modulus.to_s.sha1}"
   this.request("+end" => modulus.to_s.sha1)
   this.request("has" => "+body")
   this.request("has" => "+newhost", "+end" => modulus.to_s.sha1)
