@@ -12,6 +12,7 @@ class Database
     @store.transaction do
       mail = @store["mail:#{user}"]
     end
+    return nil if mail.nil?
     return mail.map do |message|
       { :from => message.from, :message => message.message, :time => message.time }
     end
