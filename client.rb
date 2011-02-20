@@ -42,7 +42,6 @@ Shoes.app :width => 1000, :title => "P2P Mail" do
   
 
   after_connect = lambda do |this|
-    this.request("+end" => modulus.sha1)
     message = this.message
     p "modulus: #{modulus}"
     this.message.body = {"+end" => modulus.sha1, "+getmail" => true }
