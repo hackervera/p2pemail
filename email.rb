@@ -20,6 +20,7 @@ response_callback = lambda do |msg|
     message.send_message
   elsif msg.has_key? "+newhost"
     db.add_host(msg["+newhost"])
+    socket.request("+end" => msg["+newhost"])
   end
 end
 
