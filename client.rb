@@ -58,7 +58,7 @@ Shoes.app :width => 1000, :title => "P2P Mail" do
     p "Just received: #{msg}"
     if msg.has_key? "+callback"
       text = msg["+callback"].map do |mail_item|
-        "FROM: #{mail_item["modulus"]}\n Message: #{mail_item["body"]}\n Timestamp: #{mail_item["timestamp"]}"
+        "FROM: #{mail_item["from"]}\n Message: #{mail_item["message"]}\n Timestamp: #{mail_item["time"]}"
       end.reverse
         @messages.text = text.join "\n\n"
     end
