@@ -2,24 +2,24 @@ if not RUBY_VERSION =~ /1.9/
   abort "You need ruby version 1.9"
 end
 require './simpleswitch'
-require './email_db'
+require './mailstore'
 Thread.abort_on_exception = true
 #TODO create config file for server values
-mail = Database.new
+db = Database.new
 message = nil
 socket = nil
-modulus = mail.modulus
+modulus = db.modulus
 response_callback = lambda do |msg|
   p "Got your message: #{msg["+body"]}"
   if msg.has_key? "+body"
-    mail.save_message(msg["+from"],msg["+body"],Time.now)
+    db.store(:from => msg["+from"], :message => msg["+body"], :time => Time.now, :user => msg["+end"])
     return
   elsif msg.has_key? "+getmail"
     p "modulus: #{modulus}"
-    message.body = { "+callback" => mail.mail(msg["+end"]), "+end" => msg["+from"] }
+    message.body = { "+callback" => db.mail(msg["+end"]), "+end" => msg["+from"] }
     message.send_message
   elsif msg.has_key? "+newhost"
-    mail.add_host(msg["+newhost"])
+    db.add_host(msg["+newhost"])
   end
 end
 
@@ -28,9 +28,9 @@ after_connect = lambda do |this|
   this.request("+end" => modulus.to_s.sha1)
   this.request("has" => "+body")
   this.request("has" => "+newhost", "+end" => modulus.to_s.sha1)
-  mail.hosts.each do |host|
-    this.request("+end" => host.first)
-  end
+  db.hosts.each do |host|
+    this.request("+end" => host)
+  end unless db.hosts.nil?
   socket = this
   message = this.message
 end
