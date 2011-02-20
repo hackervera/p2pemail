@@ -4,6 +4,7 @@ require './email_db'
   mail = Database.new
   message = nil
   modulus = mail.modulus
+  server = mail.servers
 
 Shoes.app :width => 1000, :title => "P2P Mail" do
   p "MODULUS: #{modulus}"
@@ -34,7 +35,7 @@ Shoes.app :width => 1000, :title => "P2P Mail" do
   end
   @getmail_button.click do
     @messages.text = "Retrieving messages..."
-    message.body = { "+getmail" => true, "+end" => modulus.sha1}
+    message.body = { "+getmail" => true, "+end" => server.to_s.sha1, "+from" => modulus.to_s.sha1}
     message.send_message
   end
   
@@ -45,8 +46,8 @@ Shoes.app :width => 1000, :title => "P2P Mail" do
     p "modulus: #{modulus}"
     this.message.body = {"+end" => modulus.sha1, "+getmail" => true }
     this.message.send_message
-    if server = mail.servers
-      this.message.body= {"+end" => server, "+newhost" => modulus }
+    if server
+      this.message.body= {"+end" => server.to_s.sha1, "+newhost" => modulus.to_s.sha1 }
       this.message.send_message
     end
   end

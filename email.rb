@@ -16,7 +16,7 @@ response_callback = lambda do |msg|
     return
   elsif msg.has_key? "+getmail"
     p "modulus: #{modulus}"
-    message.body = { "+callback" => mail.mail(msg["+end"]), "+end" => msg["+end"] }
+    message.body = { "+callback" => mail.mail(msg["+end"]), "+end" => msg["+from"] }
     message.send_message
   elsif msg.has_key? "+newhost"
     mail.add_host(msg["+newhost"])
