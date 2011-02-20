@@ -12,7 +12,9 @@ class Database
     @store.transaction do
       mail = @store["mail:#{user}"]
     end
-    return mail
+    return mail.map do |message|
+      { :from => message.from, :message => message.message, :time => message.time }
+    end
   end
   def store(options)
     @store.transaction do
