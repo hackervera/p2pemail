@@ -29,9 +29,6 @@ after_connect = lambda do |this|
   this.request("+end" => modulus.to_s.sha1)
   this.request("has" => "+body")
   this.request("has" => "+newhost", "+end" => modulus.to_s.sha1)
-  db.hosts.each do |host|
-    this.request("+end" => host)
-  end unless db.hosts.nil?
   socket = this
   message = this.message
 end
