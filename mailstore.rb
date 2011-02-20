@@ -8,9 +8,11 @@ class Database
     @store = PStore.new("mail_storage")
   end
   def mail(user)
+    mail = nil
     @store.transaction do
-      return @store['mail:#{user}']
+      mail = @store['mail:#{user}']
     end
+    return mail
   end
   def store(options)
     @store.transaction do
