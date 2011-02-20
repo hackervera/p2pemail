@@ -26,9 +26,8 @@ end
 
 after_connect = lambda do |this|
   p "My modulus: #{modulus.to_s.sha1}"
-  this.request("+end" => modulus.to_s.sha1)
-  this.request("has" => "+body")
-  this.request("has" => "+newhost", "+end" => modulus.to_s.sha1)
+  this.message.body = { ".tap" => [ {"is"=> modulus.to_s.sha1}, {"has" => ["+body"] }, { "is" => modulus.to_s.sha1, "has" => "+newhost"} ] }
+  this.message.send_message
   socket = this
   message = this.message
 end

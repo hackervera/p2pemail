@@ -77,17 +77,6 @@ class Switch
     end
   end
   
-  def request(options={})
-    if options["+end"] && !options["has"]
-      @message.body = {".tap"=>[{"is" => { "+end" => options["+end"]}}]}
-    elsif options["+end"] && options["has"]
-      @message.body = {".tap"=>[{"is" => { "+end" => options["+end"]}, "has" => options["has"]}]}
-    elsif options["has"]
-      @message.body = {".tap"=>[{"has" => options["has"]}]}
-    end
-    p "Sending tap"
-    @message.send_message
-  end
 
 
   def start_udpserver
