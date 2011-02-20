@@ -2,7 +2,6 @@ require 'socket'
 require 'digest/sha1'
 require 'json'
 require 'yaml'
-require './email_db'
 
 #Thread.abort_on_exception = true
 #TODO config file
