@@ -19,13 +19,15 @@ response_callback = lambda do |msg|
     message.body = { "+callback" => db.mail(msg["+end"]), "+end" => msg["+from"] }
     message.send_message
   elsif msg.has_key? "+newhost"
-    db.add_host(msg["+newhost"])
+    db.add_host(msg["+newhost"], modulus)
+    message.body = db.tap(modulus)
+    message.send_message
   end
 end
 
 after_connect = lambda do |this|
   p "My modulus: #{modulus.to_s.sha1}"
-  this.message.body = { ".tap" => [ {"is"=> modulus.to_s.sha1}, {"has" => ["+body"] }, { "is" => modulus.to_s.sha1, "has" => "+newhost"} ] }
+  this.message.body = db.tap(modulus)
   this.message.send_message
   socket = this
   message = this.message

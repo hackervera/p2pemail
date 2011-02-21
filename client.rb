@@ -7,7 +7,7 @@ config = YAML::load_file('server.config')
   modulus = mail.modulus
   server = config['server']
 
-Shoes.app :width => 1500, :title => "P2P Mail" do
+Shoes.app :width => 1100, :title => "P2P Mail" do
   p "MODULUS: #{modulus}"
   @outgoing = flow :width => 400
   flow :width => 100

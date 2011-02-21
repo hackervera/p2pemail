@@ -28,10 +28,13 @@ class Database
       @store["mail:#{options[:user]}"] << mail
     end
   end
-  def add_host(host)
+  def add_host(host, modulus)
     @store.transaction do
+      @store['tap'] ||= [ {"is"=> modulus.to_s.sha1}, {"has" => ["+body"] }, { "is" => modulus.to_s.sha1, "has" => "+newhost"} ]
       @store['hosts'] ||= []
       @store['hosts'] << host
+      @store['tap'] += [{"is" => host }]
+      @store['tap'].uniq!
     end
   end
   def hosts
@@ -52,5 +55,13 @@ class Database
       end
     end
     return mod
+  end
+  def tap(modulus)
+    tap = nil
+    @store.transaction do
+      @store['tap'] ||= [ {"is"=> modulus.to_s.sha1}, {"has" => ["+body"] }, { "is" => modulus.to_s.sha1, "has" => "+newhost"} ]
+      tap = {".tap" => @store['tap'] }
+    end
+    return tap
   end
 end
